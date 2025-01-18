@@ -6,6 +6,7 @@ import fastifyEnv from "@fastify/env";
 import fastifyRateLimit from "@fastify/rate-limit";
 import fastifyHelmet from "@fastify/helmet";
 import Redis from "ioredis";
+import cors from "@fastify/cors";
 import dbConnection from "./plugins/db.js";
 import envSchema from "./schemas/envSchema.js";
 import userRoutes from "./routes/userRoutes.js";
@@ -30,6 +31,11 @@ const envToLogger = {
 const fastify = Fastify({
   logger: envToLogger[environment] ?? false,
 });
+await fastify.register(cors, {
+  origin: "*",
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+})
 await fastify.register(fastifyHelmet);
 await fastify.register(fastifyRateLimit, {
   max: 20,
