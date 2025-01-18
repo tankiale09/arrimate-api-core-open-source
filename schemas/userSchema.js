@@ -5,7 +5,7 @@ const registerUserSchema = {
       properties: {
         name: { type: 'string' }, // Validación de nombre
         email: { type: 'string', format: 'email' }, // Validación de email
-        password: { type: 'string', minLength: 8, format: "password" }, // Validación de contraseña
+        password: { type: 'string', minLength: 8, maxLength:30 , format: "password" }, // Validación de contraseña
       },
     },
   };
@@ -16,7 +16,7 @@ const registerUserSchema = {
       properties: {
         email: { type: 'string', format: 'email' }, // Validación de email
         password: { type: 'string', minLength: 8, format: "password" }, // Validación de contraseña
-        fingerprint: { type: 'string' }, // Validación de fingerprint
+        fingerprint: { type: 'string', minLength: 15 }, // Validación de fingerprint
       },
     },
   }
