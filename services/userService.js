@@ -17,7 +17,7 @@ async function userRegisterHandler(request, reply) {
 }
 async function userLoginHandler(request, reply) {
     let fingerprint = JSON.stringify(request.body.fingerprint);
-    await request.server.redis.set(request.id , fingerprint, "EX", 7200);
+    
     const jwtPrimary = request.jwtPrimary;
     const jwtSecondary = request.jwtSecondary;
     await reply.setCookie("jwt", jwtSecondary, {
@@ -28,6 +28,7 @@ async function userLoginHandler(request, reply) {
         path: "/",
         signed: true,
     }).send({ token: jwtPrimary });
+    await request.server.redis.set(request.id , fingerprint, "EX", 7200);
 }
 
 async function userPrehandler(request, reply) {
@@ -50,6 +51,7 @@ async function userPrehandler(request, reply) {
     request.id = user._id;
     request.email = user.email;
 }
+
 export {
     userRegisterHandler, 
     userLoginHandler, 

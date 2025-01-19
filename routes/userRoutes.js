@@ -36,6 +36,13 @@ function userRoutes(fastify, opts, done) {
       await reply.send({ newToken: request.jwtPrimary });
     },
   });
+  fastify.route({
+    method: "GET",
+    url: "/logout",
+    handler: async function logoutHandler(request, reply) {
+      await reply.clearCookie("jwt").send({ msg: "Logout Succesfully" });
+    },
+  });
   done();
 }
 
