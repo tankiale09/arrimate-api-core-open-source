@@ -9,7 +9,7 @@ import Redis from "ioredis";
 import cors from "@fastify/cors";
 import dbConnection from "./plugins/db.js";
 import envSchema from "./schemas/envSchema.js";
-import userRoutes from "./routes/userRoutes.js";
+import userRoutes from "./routes/authRoutes.js";
 
 const environment = process.env.NODE_ENV ?? "development";
 const envToLogger = {
@@ -71,7 +71,7 @@ fastify.route({
   method: "GET",
   url: "/",
   handler: async(request, reply) => {
-    reply.send({ message: "Hello World" });
+    reply.send({ msg: "Hello World" });
   },
 });
 //Esperar Fastify para registrar los plugins

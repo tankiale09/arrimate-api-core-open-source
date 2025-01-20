@@ -1,5 +1,6 @@
 import userSchema from "../models/userModel.js";
 import bcrypt from "bcrypt";
+import { secondaryDecryptJwtService } from "./jwtService.js";
 async function userRegisterHandler(request, reply) {
     const { name, email, password } = request.body;
     try {
@@ -51,9 +52,28 @@ async function userPrehandler(request, reply) {
     request.id = user._id;
     request.email = user.email;
 }
-
+async function logoutHandler(request, reply) {
+    await reply.clearCookie("jwt").send({ msg: "Logout Successfully" });
+    const SECRET_KEY_JWT  = request.SECRET_KEY_JWT
+    const cookie = request.cookies.jwt;
+    if (!cookie) return;
+    const cookieToken = request.unsignCookie(request.cookies.jwt);    
+    if (cookieToken.valid != true) return;
+    try {
+      const email = await secondaryDecryptJwtService(cookieToken.value, SECRET_KEY_JWT);
+      const user = await userSchema.findOne({ email });
+      if (!user) return;
+      const result = await request.server.redis.del(user._id);
+      return;
+    } catch (error) {
+      console.error(error);
+      return;
+    }
+    
+}
 export {
     userRegisterHandler, 
     userLoginHandler, 
-    userPrehandler
+    userPrehandler,
+    logoutHandler
 };

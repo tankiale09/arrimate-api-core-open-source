@@ -45,7 +45,7 @@ async function jwtService(request, reply) {
   }
 }
 async function newPrimaryJwtService(request, reply) {
-    const {SECRET_KEY_JWT} = request.getEnvs();
+    const SECRET_KEY_JWT = request.SECRET_KEY_JWT
     const cookie = request.cookies.jwt;
     if (!cookie) {
       reply.status(401).send({msg: "No se ha proporcionado un token"});
@@ -57,7 +57,7 @@ async function newPrimaryJwtService(request, reply) {
       return;
     }
     try {
-      const email = await jose.jwtDecrypt(cookieData.value, jose.base64url.decode(SECRET_KEY_JWT));
+      const email = await jose.jwtDecrypt(cookieData.value, SECRET_KEY_JWT);
       const user = await userSchema.findOne({email: email.payload.email});
       if (!user) {
         reply.status(401).send({msg: "Token inválido"});
@@ -70,7 +70,7 @@ async function newPrimaryJwtService(request, reply) {
       .setIssuer("urn:backend:issuer")
       .setAudience("urn:frontend:audience")
       .setExpirationTime("2h")
-      .encrypt(jose.base64url.decode(SECRET_KEY_JWT));
+      .encrypt(SECRET_KEY_JWT);
       request.jwtPrimary = token;
     } catch (error) {
       console.error(error);
@@ -78,7 +78,18 @@ async function newPrimaryJwtService(request, reply) {
       return;
     }    
 }
+async function secondaryDecryptJwtService(token, SECRET_KEY_JWT){
+  try{
+    const decrypted = await jose.jwtDecrypt(token, SECRET_KEY_JWT);
+    return decrypted.payload.email;
+  }catch (error) {
+    console.log(error);
+    throw new Error("Error decrypting token");
+  }
+}
+
 export {
     jwtService,
-    newPrimaryJwtService
+    newPrimaryJwtService,
+    secondaryDecryptJwtService
 };
