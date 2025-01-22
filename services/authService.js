@@ -6,14 +6,14 @@ async function userRegisterHandler(request, reply) {
     try {
         const userExists = await userSchema.findOne({ email }).lean()
         if (userExists) {
-            return reply.status(409).send("User already exists");
+            return reply.status(409).send({msg: "User already exists"});
         }
         const user = new userSchema({ name, email, password });
         await user.save();
         reply.status(201).send({msg: "User created successfully"});
     } catch (error) {
         console.error(error);
-        reply.status(500).send("Error creating user");
+        reply.status(500).send({msg: "Error creating user"});
     }
 }
 async function userLoginHandler(request, reply) {
@@ -41,13 +41,13 @@ async function userPrehandler(request, reply) {
       valid = await bcrypt.compare(password, user.password);
     } catch (error) {
       console.error(error);
-      reply.status(500).send("Server Error");
+      reply.status(500).send({msg: "Server Error"});
     }
     if (!user) {
-      reply.status(401).send("Invalid credentials");
+      reply.status(401).send({msg: "Invalid credentials"});
     }
     if (!valid) {
-      reply.status(401).send("Invalid credentials");
+      reply.status(401).send({msg: "Invalid credentials"});
     }
     request.id = user._id;
     request.email = user.email;
