@@ -33,7 +33,16 @@ const fastify = Fastify({
   logger: envToLogger[environment] ?? false,
 });
 await fastify.register(cors, {
-  origin: "*",
+  origin: (origin, cb) => {
+    const hostname = new URL(origin).hostname
+    if(hostname === "localhost"){
+      //  Request from localhost will pass
+      cb(null, true)
+      return
+    }
+    // Generate an error on other origins, disabling access
+    cb(new Error("Not allowed"), false)
+  },
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
