@@ -9,7 +9,8 @@ import Redis from "ioredis";
 import cors from "@fastify/cors";
 import dbConnection from "./plugins/db.js";
 import envSchema from "./schemas/envSchema.js";
-import userRoutes from "./routes/authRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
+import usersRoutes from "./routes/userRoutes.js";
 
 const environment = process.env.NODE_ENV ?? "development";
 const envToLogger = {
@@ -66,7 +67,8 @@ await fastify.register(fastifyCookie, {
   secret: fastify.config.SECRET_COOKIES,
 });
 // Registrar rutas con prefijo
-await fastify.register(userRoutes, { prefix: "/api/v1/users" });
+await fastify.register(authRoutes, { prefix: "/api/v1/users" });
+await fastify.register(usersRoutes, { prefix: "/api/v1/users" });
 fastify.route({
   method: "GET",
   url: "/",

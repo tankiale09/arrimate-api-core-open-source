@@ -1,5 +1,5 @@
 import * as jose from "jose";
-import { registerUserSchema, loginUserSchema } from "../schemas/userSchema.js";
+import { registerUserSchema, loginUserSchema } from "../schemas/authSchema.js";
 import {
   userRegisterHandler,
   userLoginHandler,
@@ -10,7 +10,7 @@ import {
   jwtService,
   newPrimaryJwtService,
 } from "../services/jwtService.js";
-function userRoutes(fastify, opts, done) {
+function authRoutes(fastify, opts, done) {
   // Initialize the SECRET_KEY_JWT with the server, reduce the execution time of the handler.
   const SECRET = jose.base64url.decode(fastify.config.SECRET_KEY_JWT);
   fastify.addHook("onRequest", async (request, reply) => {
@@ -55,4 +55,4 @@ function userRoutes(fastify, opts, done) {
   done();
 }
 
-export default userRoutes;
+export default authRoutes;
